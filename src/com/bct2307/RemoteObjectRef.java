@@ -68,7 +68,6 @@ public class RemoteObjectRef implements Serializable {
 
     @Override
     public int hashCode() {
-        //return (Obj_Key);      //TODO: Use better hashCode formula
         return this.Remote_Interface_Name.hashCode() +
                 (this.Obj_Key * 5) +
                 (this.Port * 3) +
