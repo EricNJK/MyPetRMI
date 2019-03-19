@@ -14,30 +14,33 @@ package com.bct2307;
 import com.bct2307.registry.LocateSimpleRegistry;
 import com.bct2307.registry.SimpleRegistry;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
 import java.io.IOException;
-import java.text.DecimalFormat;
 
 public class EmployeeClient {
-    //TODO: Convert to handle EmployeeList
+    // Convert to handle EmployeeList
     // the main takes three arguments:
     // (0) a host. 
     // (1) a port.
     // (2) a service name.
-    // (3) a file name as above. 
+    // (3) a file name as above. // Unused
     public static void main(String[] args)
             throws IOException {
         String host = args[0];
         int port = Integer.parseInt(args[1]);
         String serviceName = args[2];
-        BufferedReader in = new BufferedReader(new FileReader(args[3]));
-        DecimalFormat df = new DecimalFormat("##");
+        //BufferedReader in = new BufferedReader(new FileReader(args[3]));
+        //DecimalFormat df = new DecimalFormat(".##");
 
         // locate the registry and get ror.
         SimpleRegistry sr =
                 LocateSimpleRegistry.getRegistry(host, port);
-        RemoteObjectRef ror = sr.lookup(serviceName);
+        RemoteObjectRef ror;// = null;
+        if (sr != null) {
+            ror = sr.lookup(serviceName);
+        } else {
+            System.out.println("Server not found!");
+            return;
+        }
 
         // get (create) the stub out of ror.
         EmployeeServerStub server = (EmployeeServerStub) ror.localise();
@@ -46,27 +49,11 @@ public class EmployeeClient {
         // reads the data and make a "local" employee list.
         // later this is sent to the server.
         // again no error check!
-        EmployeeList l = null;
-        EmployeeList tmp;
-        boolean flag = true, isFirstNode = true;
-        while (flag) {
-            String name = in.readLine();
-            int age = Integer.parseInt(in.readLine().trim());
-            String designation = in.readLine();
-            float salary = Float.parseFloat(in.readLine().trim());
-
-            if (name == null)
-                flag = false;    //There is no valid employee
-            else        //Data is valid
-                if (isFirstNode) {      //Create first node on the list
-                    l = new EmployeeList(name.trim(), age, designation.trim(), salary);
-                    tmp = l.next;       //tmp = 2nd node
-                    isFirstNode = false;//Show that list is not empty, prevent overwriting
-                } else {
-                    tmp = new EmployeeList(name.trim(), age, designation.trim(), salary);
-                    tmp = tmp.next;     //Go to next in list
-                }
-        }
+        EmployeeList l;
+        l = new EmployeeList("Jane Doe", 25, "Supervisor", 20000);
+        l.next = new EmployeeList("Philip Okeyo", 28, "Manager", 31000);
+        l.next.next = new EmployeeList("Alice H", 30, "C.E.O", 45000);
+        l.next.next.next = new EmployeeList("Danson M", 22, "Developer", 15000);
         // the final value of list should be the initial head of
         // the list.
 
@@ -78,14 +65,13 @@ public class EmployeeClient {
             System.out.println
                     ("name: " + temp.name + ", " +
                             "age: " + temp.age + ", " +
-                            "designation: " + temp.age + ", " +
-                            "salary: " + df.format(temp.salary));
+                            "designation: " + temp.designation + ", " +
+                            "salary: " + temp.salary);
             temp = temp.next;
         }
 
         // test the initialise.
         server.initialise(l);
-        System.out.println("\n Server initialised.");
 
         // test the findByName.
         System.out.println("\n This is the remote list given by findByName.");
@@ -104,8 +90,8 @@ public class EmployeeClient {
             System.out.println
                     ("name: " + temp.name + ", " +
                             "age: " + temp.age + ", " +
-                            "designation: " + temp.age + ", " +
-                            "salary: " + df.format(temp.salary));
+                            "designation: " + temp.designation + ", " +
+                            "salary: " + temp.salary);
             temp = temp.next;
         }
 
@@ -113,6 +99,7 @@ public class EmployeeClient {
         System.out.println("\n We test the remote site printing.");
         // here is a test.
         server.printAll();
+
     }
 }
 
