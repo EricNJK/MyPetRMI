@@ -22,6 +22,7 @@ import java.util.Hashtable;
 
 public class SimpleRegistryServer {
 
+
     public static void main(String[] args)
             throws IOException {
         // I do no checking. A user supplies one argument,
@@ -43,6 +44,7 @@ public class SimpleRegistryServer {
         // server programming. 
         // in any way.
 
+        //noinspection InfiniteLoopStatement
         while (true) {
             // create new connections.
             Socket newsoc = serverSoc.accept();
@@ -136,7 +138,7 @@ public class SimpleRegistryServer {
 
                     // put it in the table.
                     table.remove(serviceName);
-                    Object res = table.put(serviceName, ror);
+                    Object ref = table.put(serviceName, ror);
 
                     System.out.println("ROR is put in the table.\n");
 

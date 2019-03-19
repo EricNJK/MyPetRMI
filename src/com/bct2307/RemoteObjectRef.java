@@ -1,6 +1,8 @@
 package com.bct2307;
 
-public class RemoteObjectRef {
+import java.io.Serializable;
+
+public class RemoteObjectRef implements Serializable {
     public String IP_adr;
     public int Port;
     public int Obj_Key;
@@ -30,7 +32,7 @@ public class RemoteObjectRef {
         try {
             c = Class.forName(Remote_Interface_Name.replace("Impl", "Stub")); //Remote_Interface_Name + "Stub");
             o = c.newInstance();
-            return  o;
+            return o;
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -44,5 +46,32 @@ public class RemoteObjectRef {
         //Here let it return null.
         //
         return null;
+    }
+
+    @Override
+    public boolean equals(Object ref) {
+        if (ref == null)
+            return false;
+
+        if (this == ref)        //Same object
+            return true;
+
+        if (ref instanceof RemoteObjectRef) {     //Check whether this is a RemoteObjectRef
+            RemoteObjectRef ror = (RemoteObjectRef) ref;
+            return (this.Remote_Interface_Name.equals(ror.Remote_Interface_Name)
+                    && this.IP_adr.equals(ror.IP_adr)
+                    && this.Obj_Key == ror.Obj_Key
+                    && this.Port == ror.Port);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        //return (Obj_Key);      //TODO: Use better hashCode formula
+        return this.Remote_Interface_Name.hashCode() +
+                (this.Obj_Key * 5) +
+                (this.Port * 3) +
+                this.IP_adr.hashCode();
     }
 }

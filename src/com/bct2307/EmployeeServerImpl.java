@@ -10,7 +10,7 @@ package com.bct2307;
 // done via your RMI.
 
 public class EmployeeServerImpl implements EmployeeServer {
-    EmployeeList list;
+    private EmployeeList list;
 
     // this is a constructor.
     public EmployeeServerImpl() {
@@ -35,7 +35,7 @@ public class EmployeeServerImpl implements EmployeeServer {
         if (temp == null)
             return null;
         else
-            return temp.getDetails();
+            return temp.toString();
     }
 
     // this very short method should send the marshalled 
@@ -48,7 +48,7 @@ public class EmployeeServerImpl implements EmployeeServer {
     public void printAll() {
         EmployeeList temp = list;
         while (temp != null) {
-            System.out.println(temp.getDetails());
+            System.out.println(temp.toString());
             temp = temp.next;
         }
     }
